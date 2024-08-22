@@ -88,7 +88,7 @@ export const PageTabs = () => {
           <Trans>Pool</Trans>
         </MenuItem>
       </Box>
-      <More />
+      {/*<More />*/}
     </>
   )
 }

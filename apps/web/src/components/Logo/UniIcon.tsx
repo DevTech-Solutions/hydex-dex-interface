@@ -24,6 +24,7 @@ export const UniIcon = ({ clickable, ...props }: SVGProps) => (
           fill="currentColor"
         />
       </svg>
+      // <HolidayUniIcon {...props} />
     )}
   </Container>
 )

@@ -264,24 +264,24 @@ export default function Pool() {
                 <ThemedText.LargeHeader>
                   <Trans>Positions</Trans>
                 </ThemedText.LargeHeader>
-                <PoolVersionMenu protocolVersion={ProtocolVersion.V3} />
+                {/*<PoolVersionMenu protocolVersion={ProtocolVersion.V3} />*/}
               </Row>
               <ButtonRow>
-                {networkSupportsV2 && (
-                  <PoolMenu
-                    modal={ApplicationModal.POOL_OVERVIEW_OPTIONS}
-                    menuItems={menuItems}
-                    flyoutAlignment={FlyoutAlignment.LEFT}
-                    ToggleUI={(props: any) => (
-                      <MoreOptionsButton {...props}>
-                        <MoreOptionsText>
-                          <Trans>More</Trans>
-                          <ChevronDown size={15} />
-                        </MoreOptionsText>
-                      </MoreOptionsButton>
-                    )}
-                  />
-                )}
+                {/*{networkSupportsV2 && (*/}
+                {/*  <PoolMenu*/}
+                {/*    modal={ApplicationModal.POOL_OVERVIEW_OPTIONS}*/}
+                {/*    menuItems={menuItems}*/}
+                {/*    flyoutAlignment={FlyoutAlignment.LEFT}*/}
+                {/*    ToggleUI={(props: any) => (*/}
+                {/*      <MoreOptionsButton {...props}>*/}
+                {/*        <MoreOptionsText>*/}
+                {/*          <Trans>More</Trans>*/}
+                {/*          <ChevronDown size={15} />*/}
+                {/*        </MoreOptionsText>*/}
+                {/*      </MoreOptionsButton>*/}
+                {/*    )}*/}
+                {/*  />*/}
+                {/*)}*/}
                 <ResponsiveButtonPrimary data-cy="join-pool-button" id="join-pool-button" as={Link} to="/add/ETH">
                   + <Trans>New position</Trans>
                 </ResponsiveButtonPrimary>
