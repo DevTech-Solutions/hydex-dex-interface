@@ -27,7 +27,7 @@ import FaceIdIcon from 'ui/src/assets/icons/faceid.svg'
 import FingerprintIcon from 'ui/src/assets/icons/fingerprint.svg'
 import LockIcon from 'ui/src/assets/icons/lock.svg'
 import MessageQuestion from 'ui/src/assets/icons/message-question.svg'
-import UniswapIcon from 'ui/src/assets/icons/uniswap-logo.svg'
+import UniswapIcon from 'ui/src/assets/icons/hydex-logo.svg'
 import {
   Chart,
   Coins,
