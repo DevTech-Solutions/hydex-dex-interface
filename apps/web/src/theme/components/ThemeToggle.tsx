@@ -1,7 +1,7 @@
 import Row from 'components/Row'
 import { Trans } from 'i18n'
 import { atom, useAtom } from 'jotai'
-import { atomWithStorage, useAtomValue, useUpdateAtom } from 'jotai/utils'
+import { atomWithStorage, useUpdateAtom } from 'jotai/utils'
 import ms from 'ms'
 import { useCallback, useEffect, useMemo } from 'react'
 import { Moon, Sun } from 'react-feather'
@@ -64,10 +64,7 @@ export function ThemeColorMetaUpdater() {
 }
 
 export function useIsDarkMode(): boolean {
-  const mode = useAtomValue(themeModeAtom)
-  const systemTheme = useAtomValue(systemThemeAtom)
-
-  return (mode === ThemeMode.AUTO ? systemTheme : mode) === ThemeMode.DARK
+  return true
 }
 
 export function useDarkModeManager(): [boolean, (mode: ThemeMode) => void] {
