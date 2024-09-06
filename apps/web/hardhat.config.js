@@ -6,7 +6,7 @@ require('dotenv').config()
 
 const forkingConfig = {
   httpHeaders: {
-    Origin: 'localhost:3000', // infura allowlists requests by origin
+    Origin: 'https://hydex-interface.web.app', // infura allowlists requests by origin
   },
 }
 
