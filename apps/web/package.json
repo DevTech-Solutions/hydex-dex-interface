@@ -4,6 +4,7 @@
   "description": "Uniswap Interface",
   "license": "GPL-3.0-or-later",
   "scripts": {
+    "build": "craco build",
     "ajv": "node scripts/compile-ajv-validators.js",
     "check:deps:usage": "depcheck",
     "check:circular": "concurrently \"../../scripts/check-circular-imports.sh ./src/pages/App.tsx 7\" \"../../scripts/check-circular-imports.sh ./src/setupTests.ts 0\"",

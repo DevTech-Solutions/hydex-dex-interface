@@ -1,0 +1,12 @@
+{
+  "projects": {
+    "default": "hydex-d90c9"
+  },
+  "targets": {
+    "hydex-d90c9": {
+      "hosting": {
+        "hydex-interface": ["hydex-interface"]
+      }
+    }
+  }
+}
