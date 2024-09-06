@@ -30,4 +30,5 @@ export const PRICE_IMPACT_WITHOUT_FEE_CONFIRM_MIN: Percent = new Percent(10, 100
 export const BLOCKED_PRICE_IMPACT_NON_EXPERT: Percent = new Percent(15, 100) // 15%
 
 export const ZERO_PERCENT = new Percent(0)
+export const ZERO_POINT_ONE_PERCENT = new Percent(10, 10_000)
 export const ONE_HUNDRED_PERCENT = new Percent(1)
