@@ -20,6 +20,8 @@ import { currencyId } from '../utils/currencyId'
 import { useUniswapXSwapCallback } from './useUniswapXSwapCallback'
 import { useUniversalRouterSwapCallback } from './useUniversalRouter'
 
+import JSBI from 'jsbi'
+
 export type SwapResult = Awaited<ReturnType<ReturnType<typeof useSwapCallback>>>
 
 type UniversalRouterFeeField = { feeOptions: FeeOptions } | { flatFeeOptions: FlatFeeOptions }
@@ -28,10 +30,26 @@ function getUniversalRouterFeeFields(trade?: InterfaceTrade): UniversalRouterFee
   if (!isClassicTrade(trade)) return undefined
   if (!trade.swapFee) return undefined
 
+  const percent = new Percent(10, 10_000) // 0.1% = 10 basis points
+
+  const outputAmount = trade.outputAmount.quotient
+  const outputAmountJSBI = JSBI.BigInt(outputAmount.toString())
+  const swapFeeAmount = JSBI.divide(JSBI.multiply(outputAmountJSBI, percent.numerator), percent.denominator)
+  const swapFeeAmountString = swapFeeAmount.toString()
+
+  // Set the swap fee with the calculated amount
+  trade.swapFee = {
+    percent,
+    amount: swapFeeAmountString,
+    recipient: '0x84B0d6acE46cae71B1eDeadD120Ac512eFe685d0',
+  }
+
   if (trade.tradeType === TradeType.EXACT_INPUT) {
     return { feeOptions: { fee: trade.swapFee.percent, recipient: trade.swapFee.recipient } }
   } else {
-    return { flatFeeOptions: { amount: BigNumber.from(trade.swapFee.amount), recipient: trade.swapFee.recipient } }
+    return {
+      flatFeeOptions: { amount: BigNumber.from(trade.swapFee.amount), recipient: trade.swapFee.recipient },
+    }
   }
 }
 

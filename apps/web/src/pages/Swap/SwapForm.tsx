@@ -127,6 +127,11 @@ export function SwapForm({ disableTokenInputs = false, onCurrencyChange }: SwapF
   )
 
   useEffect(() => {
+    if (trade) {
+      console.log('Printing raw trade')
+      console.log(trade)
+    }
+
     // Force exact input if the user switches to an output token with tax
     if (outputTokenHasTax && independentField === Field.OUTPUT) {
       setSwapState((state) => ({
