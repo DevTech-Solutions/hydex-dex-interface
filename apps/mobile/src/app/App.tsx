@@ -1,11 +1,4 @@
 import { ApolloProvider } from '@apollo/client'
-import {
-  DatadogProvider,
-  DatadogProviderConfiguration,
-  DdRum,
-  DdSdkReactNative,
-  SdkVerbosity,
-} from '@datadog/mobile-react-native'
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
 import * as Sentry from '@sentry/react-native'
 import { PerformanceProfiler, RenderPassReport } from '@shopify/react-native-performance'
@@ -57,7 +50,6 @@ import { FeatureFlags, WALLET_FEATURE_FLAG_NAMES, getFeatureFlagName } from 'uni
 import {
   getFeatureFlagWithExposureLoggingDisabled,
   useFeatureFlag,
-  useFeatureFlagWithExposureLoggingDisabled,
 } from 'uniswap/src/features/gating/hooks'
 import { loadStatsigOverrides } from 'uniswap/src/features/gating/overrides/customPersistedOverrides'
 import { Statsig, StatsigOptions, StatsigProvider, StatsigUser } from 'uniswap/src/features/gating/sdk/statsig'
@@ -70,8 +62,7 @@ import { sendAnalyticsEvent } from 'uniswap/src/features/telemetry/send'
 import { UnitagUpdaterContextProvider } from 'uniswap/src/features/unitags/context'
 import i18n from 'uniswap/src/i18n/i18n'
 import { CurrencyId } from 'uniswap/src/types/currency'
-import { isDetoxBuild, isJestRun } from 'utilities/src/environment/constants'
-import { attachUnhandledRejectionHandler } from 'utilities/src/logger/Datadog'
+import { isDetoxBuild } from 'utilities/src/environment/constants'
 import { registerConsoleOverrides } from 'utilities/src/logger/console'
 import { logger } from 'utilities/src/logger/logger'
 import { useAsyncData } from 'utilities/src/react/hooks'
@@ -125,27 +116,25 @@ if (!__DEV__ && !isDetoxBuild) {
 }
 
 // Datadog
-const datadogConfig = new DatadogProviderConfiguration(
-  config.datadogClientToken,
-  getSentryEnvironment(),
-  config.datadogProjectId,
-  !__DEV__, // trackInteractions
-  !__DEV__, // trackResources
-  !__DEV__, // trackErrors
-)
-datadogConfig.site = 'US1'
-datadogConfig.longTaskThresholdMs = 100
-datadogConfig.nativeCrashReportEnabled = true
-datadogConfig.verbosity = SdkVerbosity.INFO
-// Datadog does not expose event type, hence we can not type return
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-datadogConfig.errorEventMapper = (event) => {
-  // this is Sentry error, which is caused by the not complete closing of their SDK
-  if (event.message.includes('Native is disabled')) {
-    return null
-  }
-  return event
-}
+// const datadogConfig = new DatadogProviderConfiguration(
+//   config.datadogClientToken,
+//   getSentryEnvironment(),
+//   config.datadogProjectId,
+//   !__DEV__, // trackInteractions
+//   !__DEV__, // trackResources
+//   !__DEV__, // trackErrors
+// )
+// datadogConfig.site = 'US1'
+// datadogConfig.longTaskThresholdMs = 100
+// datadogConfig.nativeCrashReportEnabled = true
+// datadogConfig.verbosity = SdkVerbosity.INFO
+// datadogConfig.errorEventMapper = (event) => {
+//   // this is Sentry error, which is caused by the not complete closing of their SDK
+//   if (event.message.includes('Native is disabled')) {
+//     return null
+//   }
+//   return event
+// }
 
 // Log boxes on simulators can block detox tap event when they cover buttons placed at
 // the bottom of the screen and cause tests to fail.
@@ -160,24 +149,24 @@ initFirebaseAppCheck()
 function App(): JSX.Element | null {
   // Here Statsig is not yet initialised
   const [isDatadogEnabled, setIsDatadogEnabled] = useState(false)
-  useEffect(() => {
-    if (!__DEV__ && !isDetoxBuild && isDatadogEnabled) {
-      // We can not use both Datadog and Sentry because their error catchers conflict.
-      // We need to wait until Statsig loads feature flags to chose Datadog or Sentry.
-      // If we initialise Sentry async - some of its features do not work properly (for some reason)
-      // Hence we always initiliase and later close it if Datadog is enabled.
-      Sentry.close().catch(() => undefined)
-      attachUnhandledRejectionHandler()
-    }
-  }, [isDatadogEnabled])
+  // useEffect(() => {
+  //   if (!__DEV__ && !isDetoxBuild && isDatadogEnabled) {
+  //     // We can not use both Datadog and Sentry because their error catchers conflict.
+  //     // We need to wait until Statsig loads feature flags to chose Datadog or Sentry.
+  //     // If we initialise Sentry async - some of its features do not work properly (for some reason)
+  //     // Hence we always initiliase and later close it if Datadog is enabled.
+  //     Sentry.close().catch(() => undefined)
+  //     attachUnhandledRejectionHandler()
+  //   }
+  // }, [isDatadogEnabled])
 
   // We want to ensure deviceID is used as the identifier to link with analytics
   const fetchAndSetDeviceId = useCallback(async () => {
     const uniqueId = await getUniqueId()
     if (isDatadogEnabled) {
-      DdSdkReactNative.setUser({
-        id: uniqueId,
-      }).catch(() => undefined)
+      // DdSdkReactNative.setUser({
+      //   id: uniqueId,
+      // }).catch(() => undefined)
     } else {
       Sentry.setUser({
         id: uniqueId,
@@ -218,38 +207,36 @@ function App(): JSX.Element | null {
 
   return (
     <StatsigProvider {...statSigOptions}>
-      <DatadogProviderWrapper>
-        <Trace>
-          <StrictMode>
-            <I18nextProvider i18n={i18n}>
-              <SentryTags>
-                <SafeAreaProvider>
-                  <SharedWalletProvider reduxStore={store}>
-                    <AnalyticsNavigationContextProvider
-                      shouldLogScreen={shouldLogScreen}
-                      useIsPartOfNavigationTree={useIsPartOfNavigationTree}
-                    >
-                      <AppOuter />
-                    </AnalyticsNavigationContextProvider>
-                  </SharedWalletProvider>
-                </SafeAreaProvider>
-              </SentryTags>
-            </I18nextProvider>
-          </StrictMode>
-        </Trace>
-      </DatadogProviderWrapper>
+      <Trace>
+        <StrictMode>
+          <I18nextProvider i18n={i18n}>
+            <SentryTags>
+              <SafeAreaProvider>
+                <SharedWalletProvider reduxStore={store}>
+                  <AnalyticsNavigationContextProvider
+                    shouldLogScreen={shouldLogScreen}
+                    useIsPartOfNavigationTree={useIsPartOfNavigationTree}
+                  >
+                    <AppOuter />
+                  </AnalyticsNavigationContextProvider>
+                </SharedWalletProvider>
+              </SafeAreaProvider>
+            </SentryTags>
+          </I18nextProvider>
+        </StrictMode>
+      </Trace>
     </StatsigProvider>
   )
 }
 
-function DatadogProviderWrapper({ children }: PropsWithChildren): JSX.Element {
-  const datadogEnabled = useFeatureFlagWithExposureLoggingDisabled(FeatureFlags.Datadog)
-
-  if (isDetoxBuild || isJestRun || !datadogEnabled) {
-    return <>{children}</>
-  }
-  return <DatadogProvider configuration={datadogConfig}>{children}</DatadogProvider>
-}
+// function DatadogProviderWrapper({ children }: PropsWithChildren): JSX.Element {
+//   const datadogEnabled = useFeatureFlagWithExposureLoggingDisabled(FeatureFlags.Datadog)
+//
+//   if (isDetoxBuild || isJestRun || !datadogEnabled) {
+//     return <>{children}</>
+//   }
+//   return <DatadogProvider configuration={datadogConfig}>{children}</DatadogProvider>
+// }
 
 function SentryTags({ children }: PropsWithChildren): JSX.Element {
   useEffect(() => {
@@ -257,12 +244,12 @@ function SentryTags({ children }: PropsWithChildren): JSX.Element {
 
     for (const [_, flagKey] of WALLET_FEATURE_FLAG_NAMES.entries()) {
       if (isDatadogEnabled) {
-        DdRum.addFeatureFlagEvaluation(
-          // Datadog has a limited set of accepted symbols in feature flags
-          // https://docs.datadoghq.com/real_user_monitoring/guide/setup-feature-flag-data-collection/?tab=reactnative#feature-flag-naming
-          flagKey.replaceAll('-', '_'),
-          Statsig.checkGateWithExposureLoggingDisabled(flagKey),
-        ).catch(() => undefined)
+        // DdRum.addFeatureFlagEvaluation(
+        //   // Datadog has a limited set of accepted symbols in feature flags
+        //   // https://docs.datadoghq.com/real_user_monitoring/guide/setup-feature-flag-data-collection/?tab=reactnative#feature-flag-naming
+        //   flagKey.replaceAll('-', '_'),
+        //   Statsig.checkGateWithExposureLoggingDisabled(flagKey),
+        // ).catch(() => undefined)
       } else {
         Sentry.setTag(`featureFlag.${flagKey}`, Statsig.checkGateWithExposureLoggingDisabled(flagKey))
       }
@@ -270,12 +257,12 @@ function SentryTags({ children }: PropsWithChildren): JSX.Element {
 
     for (const experiment of Object.values(Experiments)) {
       if (isDatadogEnabled) {
-        DdRum.addFeatureFlagEvaluation(
-          // Datadog has a limited set of accepted symbols in feature flags
-          // https://docs.datadoghq.com/real_user_monitoring/guide/setup-feature-flag-data-collection/?tab=reactnative#feature-flag-naming
-          `experiment_${experiment.replaceAll('-', '_')}`,
-          Statsig.getExperimentWithExposureLoggingDisabled(experiment).getGroupName(),
-        ).catch(() => undefined)
+        // DdRum.addFeatureFlagEvaluation(
+        //   // Datadog has a limited set of accepted symbols in feature flags
+        //   // https://docs.datadoghq.com/real_user_monitoring/guide/setup-feature-flag-data-collection/?tab=reactnative#feature-flag-naming
+        //   `experiment_${experiment.replaceAll('-', '_')}`,
+        //   Statsig.getExperimentWithExposureLoggingDisabled(experiment).getGroupName(),
+        // ).catch(() => undefined)
       } else {
         Sentry.setTag(
           `experiment.${experiment}`,
