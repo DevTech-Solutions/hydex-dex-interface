@@ -16,7 +16,7 @@ export default defineConfig({
       await setupHardhatEvents(on, config)
       return config
     },
-    baseUrl: 'https://hydex-interface.web.app',
+    baseUrl: 'http://localhost:3000',
     specPattern: 'cypress/{e2e,staging}/**/*.test.ts',
   },
 })
